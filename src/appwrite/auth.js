@@ -8,8 +8,8 @@ export class AuthService {
 
   constructor() {
     this.client
-      .setEndpoint(config.apWriteUrl)
-      .setProject(config.apWriteProjectId);
+      .setEndpoint(config.appWriteUrl)
+      .setProject(config.appWriteProjectId);
 
     this.account = new Account(this.client);
   }
@@ -55,14 +55,12 @@ async getCurrentUser(){
     }
     return null;
 }
-
 async logout(){
     try {
         await this.account.deleteSessions();
     } catch (err) {
       console.log(`App write Service :: logout Error ,${err}`);
-      
-        
+         
     }
 }
 

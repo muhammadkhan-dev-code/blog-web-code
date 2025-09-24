@@ -1,7 +1,7 @@
 import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Controller } from "react-hook-form";
-export default function RTE({name ,label,control , defaultValue='' }) {
+export default function RealTimeTextEditor({name ,label,control , defaultValue='' }) {
   return (
     <div className="w-full">
         {label&&<label className="inline-block mb-1 pt-1 ">{label} </label>}

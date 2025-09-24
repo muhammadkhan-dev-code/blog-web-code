@@ -1,6 +1,6 @@
 import React  , {useCallback}from 'react'
 import { useForm } from 'react-hook-form'
-import {Button, Input, Select} from '../index'
+import {Button, Input, Select, RealTimeTextEditor} from '../index'
 import appwriteService from '../../appwrite/app_config'
 import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
@@ -106,7 +106,7 @@ else
                         setValue("slug", slugTransform(e.currentTarget.value), { shouldValidate: true });
                     }}
                 />
-                <RTE label="Content :" name="content" control={control} defaultValue={getValues("content")} />
+                <RealTimeTextEditor label="Content :" name="content" control={control} defaultValue={getValues("content")} />
             </div>
             <div className="w-1/3 px-2">
                 <Input

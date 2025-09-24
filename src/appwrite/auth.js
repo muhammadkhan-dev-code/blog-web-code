@@ -1,6 +1,6 @@
 
+import { Account, Client, ID } from "appwrite";
 import config from "../config/config";
-import { Client, Account, ID } from "appwrite";
 
 export class AuthService {
   client = new Client();
@@ -10,13 +10,12 @@ export class AuthService {
     this.client
       .setEndpoint(config.appWriteUrl)
       .setProject(config.appWriteProjectId);
-
     this.account = new Account(this.client);
   }
 
   async createAccount({ email, password, name }) {
     try {
-      let userAccount=  await this.account.createEmailPasswordUser(
+      let userAccount=  await this.account.create(
         ID.unique(),
         email,
         password,
@@ -36,6 +35,7 @@ export class AuthService {
   }
 
  async login({ email, password }) {
+  console.log('login');
   try {
     return await this.account.createEmailPasswordSession(email, password);
   } catch (err) {
@@ -44,17 +44,20 @@ export class AuthService {
   }
 }
 
-async getCurrentUser(){
-    try {
-         return await this.account.get();
-        
-    } catch (error) {
-         console.error(`Login failed: ${error.message}`);
-    throw error;
-        
+async getCurrentUser() {
+  try {
+    const user = await this.account.get();
+    return user;
+  } catch (error) {
+    if (error.code === 401) {
+      console.warn("No active session. User is a guest.");
+      return null;
     }
-    return null;
+    console.error(`getCurrentUser failed: ${error.message}`);
+    throw error;
+  }
 }
+
 async logout(){
     try {
         await this.account.deleteSessions();

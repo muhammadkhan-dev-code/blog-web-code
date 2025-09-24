@@ -1,6 +1,6 @@
 import React, { useId } from "react";
 
-const Select = ({ options=
+const Select = ({ options
     , label, className='', ...props }, ref) => {
   const id = useId();
 

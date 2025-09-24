@@ -1,6 +1,6 @@
-import React, {useEffect, useState} from 'react'
+import { useEffect, useState } from 'react';
 import appwriteService from "../appwrite/app_config";
-import {Container, PostCard} from '../components'
+import { Container, PostCard } from '../components';
 
 function Home() {
     const [posts, setPosts] = useState([])
@@ -8,20 +8,28 @@ function Home() {
     useEffect(() => {
         appwriteService.getPosts().then((posts) => {
             if (posts) {
-                setPosts(posts.documents)
+                setPosts(posts.documents);
             }
-        })
+        }).catch(() => {
+            // Handle error silently or show user-friendly message
+        });
     }, [])
   
     if (posts.length === 0) {
         return (
-            <div className="w-full py-8 mt-4 text-center">
+            <div className="w-full py-16 mt-8 text-center bg-gradient-to-r from-blue-50 to-indigo-100">
                 <Container>
-                    <div className="flex flex-wrap">
-                        <div className="p-2 w-full">
-                            <h1 className="text-2xl font-bold hover:text-gray-500">
-                                Login to read posts
-                            </h1>
+                    <div className="flex flex-wrap justify-center">
+                        <div className="p-8 w-full max-w-md">
+                            <div className="bg-white rounded-xl shadow-lg p-8">
+                                <h1 className="text-3xl font-bold text-gray-800 mb-4">
+                                    Welcome to Our Blog
+                                </h1>
+                                <p className="text-gray-600 mb-6">
+                                    Login to read and create amazing posts
+                                </p>
+                                <div className="text-4xl mb-4">📚</div>
+                            </div>
                         </div>
                     </div>
                 </Container>
@@ -29,13 +37,19 @@ function Home() {
         )
     }
     return (
-        <div className='w-full py-8'>
+        <div className='w-full py-8 bg-gray-50 min-h-screen'>
             <Container>
-                <div className='flex flex-wrap'>
+                <div className="mb-8">
+                    <h1 className="text-4xl font-bold text-center text-gray-800 mb-2">
+                        Latest Blog Posts
+                    </h1>
+                    <p className="text-center text-gray-600">
+                        Discover amazing content from our community
+                    </p>
+                </div>
+                <div className='grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6'>
                     {posts.map((post) => (
-                        <div key={post.$id} className='p-2 w-1/4'>
-                            <PostCard {...post} />
-                        </div>
+                        <PostCard key={post.$id} {...post} />
                     ))}
                 </div>
             </Container>

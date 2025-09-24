@@ -9,10 +9,10 @@ const Signup = () => {
     const navigate=useNavigate();
     const [error, setError]= useState('');
     const dispatch= useDispatch();
-    const [register,handleSubmit] = useForm();
+   const { register, handleSubmit } = useForm();
 
     const createAcc=async (data)=>{
-        setError('');
+        setError("");
         try {
              const userData= await authService.createAccount(data);
              if(userData){
@@ -52,15 +52,13 @@ const Signup = () => {
 
                     <form  onSubmit={handleSubmit(createAcc)}>
                         <div className="space-y-5">
-                            <Input
-                            label='Full Name:'
-                            placeholder='Enter Your Full Name'
-                            {
-                                ...register,{
-                                    required:true
-                                }
-                            } 
-                            />
+                             <Input
+                        label="Full Name: "
+                        placeholder="Enter your full name"
+                        {...register("name", {
+                            required: true,
+                        })}
+                        />
                              <Input
                         label="Email: "
                         placeholder="Enter your email"

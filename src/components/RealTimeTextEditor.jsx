@@ -1,4 +1,3 @@
-import React from "react";
 import { Editor } from "@tinymce/tinymce-react";
 import { Controller } from "react-hook-form";
 export default function RealTimeTextEditor({name ,label,control , defaultValue='' }) {
@@ -10,6 +9,7 @@ export default function RealTimeTextEditor({name ,label,control , defaultValue='
         control={control}
         render={({field : {onChange}})=>(
           <Editor
+          apiKey={import.meta.env.VITE_TINYMCE_API_KEY}
           initialValue={defaultValue}
       init={{
         branding: false,

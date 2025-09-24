@@ -1,9 +1,9 @@
-import React  , {useCallback}from 'react'
+import React, { useCallback } from 'react'
 import { useForm } from 'react-hook-form'
-import {Button, Input, Select, RealTimeTextEditor} from '../index'
-import appwriteService from '../../appwrite/app_config'
-import { useNavigate } from 'react-router-dom'
 import { useSelector } from 'react-redux'
+import { useNavigate } from 'react-router-dom'
+import appwriteService from '../../appwrite/app_config'
+import { Button, Input, RealTimeTextEditor, Select } from '../index'
 
 
 const PostForm = ({post}) => {
@@ -20,58 +20,76 @@ const PostForm = ({post}) => {
        }
     );
  const navigate= useNavigate();
- const userData= useSelector( state=>state.user.userData);
+ const userData= useSelector( state=>state.auth.userData);
 
- const submit =async (data)=>{
-    if(post){
-        const file = data.image[0] ? appwriteService.uploadFile(data.image[0]):null  ;
-        
-        if(file){
-            appwriteService.deleteFile(post.featuredImage);
-        }
+ const submit = async (data) => {
+    // Check if user is authenticated
+    if (!userData) {
+        alert("You must be logged in to create a post.");
+        navigate("/login");
+        return;
+    }
+    
+    try {
+        if (post) {
+            // Update existing post
+            const file = data.image[0] ? await appwriteService.uploadFile(data.image[0]) : null;
+            
+            if (file) {
+                appwriteService.deleteFile(post.featuredImage);
+            }
 
-        const dbPost = await appwriteService.updatePost(
-            post.$id, {
+            const dbPost = await appwriteService.updatePost(post.$id, {
                 ...data,
                 featuredImage: file ? file.$id : undefined,
+            });
+            
+            if (dbPost) {
+                navigate(`/post/${dbPost.slug}`);
             }
-        )
-        if(dbPost){
-            navigate( `/post/${dbPost.$id}`);
-        }
-
-
-    }
-    else
-        {
-            const file = await appwriteService.uploadFile(
-                data.image[0]
-            )
-            if(file){
-                const fileId= file.$id;
-                data.featuredImage=fileId;
-                const dbPost=  await appwriteService.createPost({
-                    ...data,
-                    userId:userData.$id
-                })
-                if(dbPost){
-                    navigate(`/post/${dbPost.$id}`)
+        } else {
+            // Create new post
+            if (!data.image || !data.image[0]) {
+                alert("Please select an image for your post.");
+                return;
+            }
+            
+            const file = await appwriteService.uploadFile(data.image[0]);
+            
+            if (file) {
+                const postData = {
+                    title: data.title,
+                    slug: data.slug,
+                    content: data.content,
+                    featuredImage: file.$id,
+                    status: data.status || 'active',
+                    userId: userData.$id
+                };
+                
+                const dbPost = await appwriteService.createPost(postData);
+                
+                if (dbPost) {
+                    navigate("/"); // Redirect to home page to see all posts
                 }
             }
-
+        }
+    } catch (error) {
+        alert(`Failed to save post: ${error.message}`);
     }
-
  }
 
  const slugTransform = useCallback(
     (value)=>{
-if(value && typeof value === 'string') return value
-    .trim()
-    .toLowerCase()
-    .replace(/^[a-zA-Z\d\s]+/g,'-')
-    .replace(/\s/g,'-');
-else
-    return ''
+        if(value && typeof value === 'string') {
+            return value
+                .trim()
+                .toLowerCase()
+                .replace(/[^a-zA-Z\d\s]+/g, '-')
+                .replace(/\s+/g, '-')
+                .replace(/^-+|-+$/g, '')
+                .replace(/-+/g, '-');
+        }
+        return '';
     },[]
  )
  React.useEffect(()=>

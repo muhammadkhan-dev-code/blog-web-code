@@ -49,7 +49,7 @@ const Header = () => {
         </div>
 
       </nav>
-      <ul className='flex ml-auto'>
+      <ul className='flex mx-48  space-x-4 justify-start items-center font-bold '>
         {
           navItems.map( (item)=> 
             item.active ?(
